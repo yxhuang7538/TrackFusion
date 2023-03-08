@@ -15,5 +15,5 @@ RadarNums = 3; % 雷达数量
 radarT = [3,2,4]; % 雷达量测周期
 
 
-dataSize = 100; % batch数据大小
+dataSize = 10000; % batch数据大小
 genBatchData(dataSize, RadarNums, parameter, K, RadarPos, radarT, T);

@@ -12,15 +12,15 @@ else:
 if __name__ == "__main__":
     # -------------------- 参数设置 -------------------- #
     parser = argparse.ArgumentParser()
-    parser.add_argument('--batchSize', type=int, default=32)
+    parser.add_argument('--batchSize', type=int, default=64)
     parser.add_argument('--inputSize', type=int, default=6)
     parser.add_argument('--hiddenSize', type=int, default=64)
-    parser.add_argument('--outputSize', type=int, default=4)
+    parser.add_argument('--outputSize', type=int, default=2)
     parser.add_argument('--numLayers', type=int, default=2)
     parser.add_argument('--midLinearSize', type=int, default=32)
     parser.add_argument('--prevLoss', type=int, default=1000)
     parser.add_argument('--finalLoss', type=float, default=1e-4)
-    parser.add_argument('--maxEpochs', type=int, default=2000)
+    parser.add_argument('--maxEpochs', type=int, default=10000)
     parser.add_argument('--printEpoch', type=int, default=1)
     parser.add_argument('--lr', type=float, default=1e-3)
     args = parser.parse_args()
@@ -30,10 +30,10 @@ if __name__ == "__main__":
     trajectorys, meas = readData()
     trainMeas, trainTraj, testMeas, testTraj = divideData(trajectorys, meas)
 
-    trainDatasets = createDatasets(trainMeas, trainTraj)
+    trainDatasets = createDatasets(trainMeas, trainTraj, Dmax=1e5)
     trainSet = DataLoader(trainDatasets, batch_size=args.batchSize, shuffle=True)
 
-    testDatasets = createDatasets(testMeas, testTraj)
+    testDatasets = createDatasets(testMeas, testTraj, Dmax=1e5)
     testSet = DataLoader(testDatasets, batch_size=1, shuffle=True)
     # ------------------------------------------------- #
 
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     print('model.parameters:', model.parameters)
 
     criterion = torch.nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=1e-8)
     # ------------------------------------------------- #
 
     # -------------------- 训练网络 -------------------- #

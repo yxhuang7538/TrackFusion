@@ -8,7 +8,7 @@ def readData():  # 读取数据
     trajectorys = scio.loadmat('./matlabFun/trajectorys.mat')['trajectorys']
     trajectorys = np.array(trajectorys).astype('float32')
     # 去掉加速度维度，不需要预测加速度
-    trajectorys = trajectorys.take([0, 1, 3, 4], 1)
+    trajectorys = trajectorys.take([0, 3], 1)
     print("trajectorys.size=", trajectorys.shape)
 
     meas = scio.loadmat('./matlabFun/meas.mat')['meas']
@@ -40,12 +40,14 @@ def centerMax(meas_, traj_, Dmax=1e4, Vmax=10):  # center-max归一化方式
     traj = copy.deepcopy(traj_)
     for i in range(meas.shape[0]):
         for j in range(meas.shape[1]):
-            meas[i, j, 1, :] = (meas[i, j, 1, :] - meas[i, j, 1, 0]) / Dmax
-            meas[i, j, 0, :] = (meas[i, j, 0, :] - meas[i, j, 0, 0]) / Dmax
+            #meas[i, j, 1, :] = (meas[i, j, 1, :] - meas[i, j, 1, 0]) / Dmax
+            #meas[i, j, 0, :] = (meas[i, j, 0, :] - meas[i, j, 0, 0]) / Dmax
+            meas[i, j, 1, :] = (meas[i, j, 1, :]) / Dmax
+            meas[i, j, 0, :] = (meas[i, j, 0, :]) / Dmax
             cx = [meas[i, j, 0, 0], meas[i, j, 1, 0]]
-        traj[i, 0, :] = (traj[i, 0, :] - cx[0])
-        traj[i, 1, :] = (traj[i, 1, :] - cx[1])
-        traj[i] = np.divide(traj[i].T, np.array([Dmax, Vmax, Dmax, Vmax])).T
+        #traj[i, 0, :] = (traj[i, 0, :] - cx[0])
+        #traj[i, 1, :] = (traj[i, 1, :] - cx[1])
+        traj[i] = np.divide(traj[i].T, np.array([Dmax, Dmax])).T
     return meas, traj, meas1
 
 
@@ -54,12 +56,14 @@ def antiCenterMax(meas_, traj_, meas1, Dmax=1e4, Vmax=10):  # 反center-max 还�
     traj = copy.deepcopy(traj_)
     for i in range(meas.shape[0]):
         for j in range(meas.shape[1]):
-            meas[i, j, 1, :] = (meas[i, j, 1, :] + meas1[i, j, 1, 0]) * Dmax
-            meas[i, j, 0, :] = (meas[i, j, 0, :] + meas1[i, j, 0, 0]) * Dmax
+            #meas[i, j, 1, :] = (meas[i, j, 1, :] + meas1[i, j, 1, 0]) * Dmax
+            #meas[i, j, 0, :] = (meas[i, j, 0, :] + meas1[i, j, 0, 0]) * Dmax
+            meas[i, j, 1, :] = (meas[i, j, 1, :]) * Dmax
+            meas[i, j, 0, :] = (meas[i, j, 0, :]) * Dmax
             cx = [meas1[i, j, 0, 0], meas1[i, j, 1, 0]]
-        traj[i] = np.dot(traj[i].T, np.array([Dmax, Vmax, Dmax, Vmax])).T
-        traj[i, 0, :] = (traj[i, 0, :] + cx[0])
-        traj[i, 1, :] = (traj[i, 1, :] + cx[1])
+        traj[i] = np.dot(traj[i].T, np.array([Dmax, Dmax])).T
+        #traj[i, 0, :] = (traj[i, 0, :] + cx[0])
+        #traj[i, 1, :] = (traj[i, 1, :] + cx[1])
     return meas, traj
 
 
