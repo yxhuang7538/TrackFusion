@@ -73,6 +73,7 @@ class trajDatasets(Dataset):
         self.traj = traj
         self.meas1 = meas1
 
+
     def __len__(self):
         return self.meas.shape[0]
 
@@ -83,9 +84,9 @@ class trajDatasets(Dataset):
 if __name__ == "__main__":
     trajectorys, meas = readData()
 
-    trainMeas, trainTraj, testMeas, testTraj = divideData(trajectorys, meas)
+    #trainMeas, trainTraj, testMeas, testTraj = divideData(trajectorys, meas)
 
-    trainDatasets = createDatasets(trainMeas, trainTraj)
+    #trainDatasets = createDatasets(trainMeas, trainTraj)
 
     meas__, traj__, meas1 = centerMax(meas, trajectorys)
     meas_, traj_ = antiCenterMax(meas__, traj__, meas1)
