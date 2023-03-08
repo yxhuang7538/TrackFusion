@@ -7,6 +7,8 @@ import copy
 def readData():  # 读取数据
     trajectorys = scio.loadmat('./matlabFun/trajectorys.mat')['trajectorys']
     trajectorys = np.array(trajectorys).astype('float32')
+    # 去掉加速度维度，不需要预测加速度
+    trajectorys = trajectorys.take([0, 1, 3, 4], 1)
     print("trajectorys.size=", trajectorys.shape)
 
     meas = scio.loadmat('./matlabFun/meas.mat')['meas']
@@ -43,7 +45,7 @@ def centerMax(meas_, traj_, Dmax=1e4, Vmax=10):  # center-max归一化方式
             cx = [meas[i, j, 0, 0], meas[i, j, 1, 0]]
         traj[i, 0, :] = (traj[i, 0, :] - cx[0])
         traj[i, 1, :] = (traj[i, 1, :] - cx[1])
-        traj[i] = np.divide(traj[i].T, np.array([Dmax, Vmax, 1, Dmax, Vmax, 1])).T
+        traj[i] = np.divide(traj[i].T, np.array([Dmax, Vmax, Dmax, Vmax])).T
     return meas, traj, meas1
 
 
@@ -55,7 +57,7 @@ def antiCenterMax(meas_, traj_, meas1, Dmax=1e4, Vmax=10):  # 反center-max 还�
             meas[i, j, 1, :] = (meas[i, j, 1, :] + meas1[i, j, 1, 0]) * Dmax
             meas[i, j, 0, :] = (meas[i, j, 0, :] + meas1[i, j, 0, 0]) * Dmax
             cx = [meas1[i, j, 0, 0], meas1[i, j, 1, 0]]
-        traj[i] = np.dot(traj[i].T, np.array([Dmax, Vmax, 1, Dmax, Vmax, 1])).T
+        traj[i] = np.dot(traj[i].T, np.array([Dmax, Vmax, Dmax, Vmax])).T
         traj[i, 0, :] = (traj[i, 0, :] + cx[0])
         traj[i, 1, :] = (traj[i, 1, :] + cx[1])
     return meas, traj
@@ -73,7 +75,6 @@ class trajDatasets(Dataset):
         self.traj = traj
         self.meas1 = meas1
 
-
     def __len__(self):
         return self.meas.shape[0]
 
@@ -84,9 +85,9 @@ class trajDatasets(Dataset):
 if __name__ == "__main__":
     trajectorys, meas = readData()
 
-    #trainMeas, trainTraj, testMeas, testTraj = divideData(trajectorys, meas)
+    # trainMeas, trainTraj, testMeas, testTraj = divideData(trajectorys, meas)
 
-    #trainDatasets = createDatasets(trainMeas, trainTraj)
+    # trainDatasets = createDatasets(trainMeas, trainTraj)
 
     meas__, traj__, meas1 = centerMax(meas, trajectorys)
     meas_, traj_ = antiCenterMax(meas__, traj__, meas1)

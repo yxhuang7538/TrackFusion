@@ -15,7 +15,7 @@ if __name__ == "__main__":
     parser.add_argument('--batchSize', type=int, default=32)
     parser.add_argument('--inputSize', type=int, default=6)
     parser.add_argument('--hiddenSize', type=int, default=64)
-    parser.add_argument('--outputSize', type=int, default=6)
+    parser.add_argument('--outputSize', type=int, default=4)
     parser.add_argument('--numLayers', type=int, default=2)
     parser.add_argument('--midLinearSize', type=int, default=32)
     parser.add_argument('--prevLoss', type=int, default=1000)
