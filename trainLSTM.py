@@ -40,7 +40,7 @@ if __name__ == "__main__":
     # -------------------- 构建网络 -------------------- #
     model = LSTM.model(args.inputSize, args.hiddenSize, args.outputSize,
                            args.midLinearSize, args.numLayers)
-    if device == 'cuda':
+    if device == torch.device("cuda"):
         model = model.cuda()
     print('LSTM model:', model)
     print('model.parameters:', model.parameters)
